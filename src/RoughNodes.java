@@ -4,6 +4,7 @@ public class RoughNodes {
 	String name;
 	int type;
 	String machine;
+	int length;
 	public RoughNodes()
 	{
 		
@@ -12,6 +13,12 @@ public class RoughNodes {
 		return id;
 	}
 	public void setId(int id) {
+		this.id = id;
+	}
+	public int getLength() {
+		return id;
+	}
+	public void setLength(int id) {
 		this.id = id;
 	}
 	public String getName() {
