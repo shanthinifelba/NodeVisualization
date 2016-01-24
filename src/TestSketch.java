@@ -1,6 +1,6 @@
 import processing.core.PApplet;
 
-public class TestSkectch {
+public class TestSketch {
 	 public static int totalNumberOfNodes;
 	
 	public static void main(String[] args) {

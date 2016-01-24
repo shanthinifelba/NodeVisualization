@@ -1,6 +1,7 @@
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.google.gson.Gson;
 
@@ -15,18 +16,23 @@ public class Sketch extends PApplet {
 	private int DrawingSpaceHeight;
 	private int OffSetX = 20;
 	private int OffSetY = 20;
+	private int numberOfCars = 10; // number of cars;
 	private ArrayList<RoughNodes> nodes = new ArrayList<>();
-	
+	private boolean runonce = true;
+	private int sourceX,sourceY,destinationX,destinationY;
+	 
 	
 	public void setup() {
 		settings();
-		background(102);
+		background(152);
 		DrawingSpaceWidth = width -OffSetX*2;
 		DrawingSpaceHeight = height - OffSetY*2;
+		
+		 
 		try {
 			Gson gson = new Gson();
 			
-			RoughBase myTypes = gson.fromJson(new FileReader("C:/Users/Administrator/workspace/NodeVisualization/simulatorJSON/grids.json"), RoughBase.class);
+			RoughBase myTypes = gson.fromJson(new FileReader("C:/Users/rajendr/Documents/GitHub/NodeVisualization/simulatorJSON/grids.json"), RoughBase.class);
 			//total number of nodes from ArrayList<nodes>
 			System.out.println(myTypes.nodes.size());
 			numberOfNodes = myTypes.nodes.size();
@@ -40,21 +46,50 @@ public class Sketch extends PApplet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
+		
 	}
 
 	public void draw() {
 		
+		if(runonce){
+			for(int i=0; i<numberOfCars; i++){
+			drawCars();
+			
+			}
+			runonce = false;
+		}
 		gridWidth = (int)((DrawingSpaceWidth)/Math.sqrt(numberOfNodes));
 		gridHeight = (int)((DrawingSpaceHeight)/Math.sqrt(numberOfNodes));
-		//System.out.println(gridspace);
+		
 		drawBasicGrid(gridWidth,gridHeight); //draws the basic grid 
 		drawNodes(numberOfNodes);
-	//	drawNodes(numberOfNodes); //places the nodes on the grid intersection
+		moveCar(sourceX,sourceY,destinationX,destinationY);
+		
 	
 	}
 
 	
+
+	
+
+	
+
+	private void moveCar(int sourcex,int sourcey, int destinationx, int destinationy) {
+	
+	}
+
+	private void drawCars() {
+		Random Rand = new Random();
+		int startX = Rand.nextInt(DrawingSpaceWidth)+1;
+		int startY = Rand.nextInt(DrawingSpaceHeight)+1;
+		
+		noStroke();
+			fill(153,0,76);
+			rect(startX, startY, 20, 10);
+			ellipse(startX+5, startY+10, 5, 5);
+			ellipse(startX+15, startY+10, 5, 5);
+		
+	}
 
 	public void settings() 
 	{
@@ -63,14 +98,18 @@ public class Sketch extends PApplet {
 	
 	public  void drawBasicGrid(int gridWidth,int gridHeight)
 	{
+		 int startX = 0,startY = 0;
 		 for (int i = 0; i < 5; i++) {
-			  int startX = i * gridWidth + OffSetX;
+			   startX = i * gridWidth + OffSetX;
 			  line (startX, OffSetY, startX, DrawingSpaceHeight+OffSetY);
+			  
 			}
 			for (int i = 0; i < 5; i++) {
-			  int startY = i * gridHeight + OffSetY;
+			   startY = i * gridHeight + OffSetY;
 			  line (OffSetX, startY, DrawingSpaceWidth+OffSetX, startY);
 			}
+			
+			
 	}
 	
 	
@@ -79,26 +118,26 @@ public class Sketch extends PApplet {
 	{
 		stroke(0);
 	  
-	
-	    		 for (int j=0; j <numberOfNodes; j++) {
-	    			 int type = nodes.get(j).getType ();
-	    			if(type == 0){
-	    			 int StartX = gridWidth*j + OffSetX; 
-		    			for (int k=0; k < numberOfNodes; k++) 
-		    			{
-		    						int StartY = gridHeight*k + OffSetY;
-		    			  ellipse(StartX,StartY,25,25);
-		    			  fill(50,50,255);
+	    for (int j=0; j <numberOfNodes; j++) {
+	    	int type = nodes.get(j).getType ();
+	    	
+	    	if(type == 0){ //regular nodes
+	    	int StartX = gridWidth*j + OffSetX; 
+		    	for (int k=0; k < numberOfNodes; k++) 
+		    		{
+		    		int StartY = gridHeight*k + OffSetY;
+		    		ellipse(StartX,StartY,25,25);
+		    		fill(255,223,11);
 			    			
 		    			 }
 	    			}
-	    			else if(type == 1){
+	    			else if(type == 1){ //traffic signals
 	    			int StartX = gridWidth*j + OffSetX; 
 	    			for (int k=0; k < numberOfNodes; k++) 
 	    			{
 	    						int StartY = gridHeight*k + OffSetY;
 	    			  ellipse(StartX,StartY,25,25);
-	    			  fill(150,150,255);
+	    			  fill(51,51,255);
 		    			
 	    			 }
 	    		 }
@@ -115,8 +154,7 @@ public class Sketch extends PApplet {
 	
 }
 	
-	
-	
+
 	
 	
 	
