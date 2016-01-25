@@ -5,7 +5,7 @@ import java.util.Random;
 
 import com.google.gson.Gson;
 
-import processing.core.*;
+import processing.core.PApplet;
 
 //basic sketch drawing a grid. Right now grid is not based on the json file
 public class Sketch extends PApplet {
@@ -20,7 +20,8 @@ public class Sketch extends PApplet {
 	private ArrayList<RoughNodes> nodes = new ArrayList<>();
 	private boolean runonce = true;
 	private int sourceX,sourceY,destinationX,destinationY;
-	 
+	private ArrayList<NodeCoordinates> nodeCoordinates = new ArrayList<NodeCoordinates>();
+	private ArrayList<Car> cars = new ArrayList<Car>();
 	
 	public void setup() {
 		settings();
@@ -51,18 +52,20 @@ public class Sketch extends PApplet {
 
 	public void draw() {
 		
-		if(runonce){
-			for(int i=0; i<numberOfCars; i++){
-			drawCars();
-			
-			}
-			runonce = false;
-		}
 		gridWidth = (int)((DrawingSpaceWidth)/Math.sqrt(numberOfNodes));
 		gridHeight = (int)((DrawingSpaceHeight)/Math.sqrt(numberOfNodes));
 		
 		drawBasicGrid(gridWidth,gridHeight); //draws the basic grid 
 		drawNodes(numberOfNodes);
+		if(runonce){
+			for(int i=0; i<numberOfCars; i++){
+				
+				
+				drawCar(cars.get(i));
+			
+			}
+			runonce = false;
+		}
 		moveCar(sourceX,sourceY,destinationX,destinationY);
 		
 	
@@ -78,7 +81,7 @@ public class Sketch extends PApplet {
 	
 	}
 
-	private void drawCars() {
+	private void drawCar(Car car) {
 		Random Rand = new Random();
 		int startX = Rand.nextInt(DrawingSpaceWidth)+1;
 		int startY = Rand.nextInt(DrawingSpaceHeight)+1;
@@ -117,15 +120,27 @@ public class Sketch extends PApplet {
 	public void drawNodes(int number)
 	{
 		stroke(0);
+		//add objects into arrsylist
+		for (int n=0; n<numberOfNodes;n++){
+			nodeCoordinates.add(new NodeCoordinates());
+			nodeCoordinates.get(n).setName(nodes.get(n).name);
+			
+			cars.add(new Car());
+			
+		}
 	  
 	    for (int j=0; j <numberOfNodes; j++) {
+	    	
+	    	
 	    	int type = nodes.get(j).getType ();
 	    	
 	    	if(type == 0){ //regular nodes
 	    	int StartX = gridWidth*j + OffSetX; 
+	    	nodeCoordinates.get(j).Nodex = StartX;
 		    	for (int k=0; k < numberOfNodes; k++) 
 		    		{
 		    		int StartY = gridHeight*k + OffSetY;
+		    		nodeCoordinates.get(j).Nodey = StartY;
 		    		ellipse(StartX,StartY,25,25);
 		    		fill(255,223,11);
 			    			
@@ -133,9 +148,11 @@ public class Sketch extends PApplet {
 	    			}
 	    			else if(type == 1){ //traffic signals
 	    			int StartX = gridWidth*j + OffSetX; 
+	    			nodeCoordinates.get(j).Nodex = StartX;
 	    			for (int k=0; k < numberOfNodes; k++) 
 	    			{
 	    						int StartY = gridHeight*k + OffSetY;
+	    						nodeCoordinates.get(j).Nodey = StartY;
 	    			  ellipse(StartX,StartY,25,25);
 	    			  fill(51,51,255);
 		    			
@@ -147,7 +164,8 @@ public class Sketch extends PApplet {
 	    		System.out.println("Node type cannot be identified");
 	    		}
 	    		
-	   
+	    //	System.out.println("Node coordinates for node" + " " + nodeCoordinates.get(j).name+" "+ "x:"+ nodeCoordinates.get(j).Nodex+" "+ "y:"+ nodeCoordinates.get(j).Nodey);
+	    		
 	    }
 	
 	}

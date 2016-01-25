@@ -1,4 +1,4 @@
-import processing.core.PApplet;
+import processing.core.*;
 
 public class TestSketch {
 	 public static int totalNumberOfNodes;
