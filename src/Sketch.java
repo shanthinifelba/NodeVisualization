@@ -6,9 +6,14 @@ import java.util.Random;
 import com.google.gson.Gson;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 
 //basic sketch drawing a grid. Right now grid is not based on the json file
 public class Sketch extends PApplet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int numberOfNodes;
 	private int gridWidth; 
 	private int gridHeight;
@@ -19,8 +24,8 @@ public class Sketch extends PApplet {
 	private int numberOfCars = 10; // number of cars;
 	private ArrayList<RoughNodes> nodes = new ArrayList<>();
 	private boolean runonce = true;
-	private int sourceX,sourceY,destinationX,destinationY;
-	private ArrayList<NodeCoordinates> nodeCoordinates = new ArrayList<NodeCoordinates>();
+	private PVector location;
+	private PVector velocity;
 	private ArrayList<Car> cars = new ArrayList<Car>();
 	
 	public void setup() {
@@ -33,15 +38,18 @@ public class Sketch extends PApplet {
 		try {
 			Gson gson = new Gson();
 			
-			RoughBase myTypes = gson.fromJson(new FileReader("C:/Users/rajendr/Documents/GitHub/NodeVisualization/simulatorJSON/grids.json"), RoughBase.class);
-			//total number of nodes from ArrayList<nodes>
-			System.out.println(myTypes.nodes.size());
+			RoughBase myTypes = gson.fromJson(new FileReader("C:/Users/Administrator/workspace/NodeVisualization/simulatorJSON/grids.json"), RoughBase.class);
+			//total number of nodes from json file
 			numberOfNodes = myTypes.nodes.size();
 			nodes = myTypes.nodes;
+			gridWidth = (int)((DrawingSpaceWidth)/Math.sqrt(numberOfNodes));
+			gridHeight = (int)((DrawingSpaceHeight)/Math.sqrt(numberOfNodes));
 			
 			System.out.println(myTypes.nodes.get(0).toString());
 			System.out.println(myTypes.edges.get(1).toString());
 			
+			populateCoordinates(numberOfNodes);
+			populateVehicles(numberOfCars);
 			 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -50,48 +58,50 @@ public class Sketch extends PApplet {
 		
 	}
 
+	private void populateVehicles(int numberOfCars2) {
+		for(int j=0; j<numberOfCars; j++){
+			Car cars = new Car();
+			cars.carid = j;
+			//System.out.println("Created car"+" "+ cars.carid);
+		}
+		
+	}
+
+	private void populateCoordinates(int number) {
+		 
+		 for(int j=0; j<Math.sqrt(number);j++)
+		 {
+			 int y = gridWidth*j + OffSetY;
+			 
+			 for (int k=0; k<Math.sqrt(number); k++) 
+			 {
+			 	int x = gridHeight*k + OffSetX;
+			 	int calc =  (int) (Math.sqrt(number)*j + k);
+			 	nodes.get(calc).setNodex(x);
+			 	nodes.get(calc).setNodey(y);
+			 	//System.out.println("coodrinate" + x + " " + y);
+			 	//System.out.println(nodes.get(calc).getNodex() + " " + nodes.get(calc).getNodey());
+			 }
+			 
+		 }
+		 
+		 
+		
+	}
+
 	public void draw() {
 		
-		gridWidth = (int)((DrawingSpaceWidth)/Math.sqrt(numberOfNodes));
-		gridHeight = (int)((DrawingSpaceHeight)/Math.sqrt(numberOfNodes));
+	
 		
 		drawBasicGrid(gridWidth,gridHeight); //draws the basic grid 
 		drawNodes(numberOfNodes);
-		if(runonce){
-			for(int i=0; i<numberOfCars; i++){
-				
-				
-				drawCar(cars.get(i));
-			
-			}
-			runonce = false;
+		if(runonce==true){
+		drawCars(numberOfCars);
 		}
-		moveCar(sourceX,sourceY,destinationX,destinationY);
+		runonce = false;
 		
+		moveCar(location,velocity);
 	
-	}
-
-	
-
-	
-
-	
-
-	private void moveCar(int sourcex,int sourcey, int destinationx, int destinationy) {
-	
-	}
-
-	private void drawCar(Car car) {
-		Random Rand = new Random();
-		int startX = Rand.nextInt(DrawingSpaceWidth)+1;
-		int startY = Rand.nextInt(DrawingSpaceHeight)+1;
-		
-		noStroke();
-			fill(153,0,76);
-			rect(startX, startY, 20, 10);
-			ellipse(startX+5, startY+10, 5, 5);
-			ellipse(startX+15, startY+10, 5, 5);
-		
 	}
 
 	public void settings() 
@@ -114,61 +124,104 @@ public class Sketch extends PApplet {
 			
 			
 	}
-	
-	
-	
+
 	public void drawNodes(int number)
 	{
 		stroke(0);
-		//add objects into arrsylist
-		for (int n=0; n<numberOfNodes;n++){
-			nodeCoordinates.add(new NodeCoordinates());
-			nodeCoordinates.get(n).setName(nodes.get(n).name);
-			
-			cars.add(new Car());
-			
-		}
+		
 	  
-	    for (int j=0; j <numberOfNodes; j++) {
+	    for (int j=0; j <numberOfNodes; j++) 
+	    {
 	    	
 	    	
 	    	int type = nodes.get(j).getType ();
 	    	
-	    	if(type == 0){ //regular nodes
-	    	int StartX = gridWidth*j + OffSetX; 
-	    	nodeCoordinates.get(j).Nodex = StartX;
-		    	for (int k=0; k < numberOfNodes; k++) 
-		    		{
-		    		int StartY = gridHeight*k + OffSetY;
-		    		nodeCoordinates.get(j).Nodey = StartY;
-		    		ellipse(StartX,StartY,25,25);
-		    		fill(255,223,11);
-			    			
-		    			 }
-	    			}
-	    			else if(type == 1){ //traffic signals
-	    			int StartX = gridWidth*j + OffSetX; 
-	    			nodeCoordinates.get(j).Nodex = StartX;
-	    			for (int k=0; k < numberOfNodes; k++) 
-	    			{
-	    						int StartY = gridHeight*k + OffSetY;
-	    						nodeCoordinates.get(j).Nodey = StartY;
-	    			  ellipse(StartX,StartY,25,25);
-	    			  fill(51,51,255);
-		    			
-	    			 }
-	    		 }
+	    	int StartX = nodes.get(j).getNodex();
+	    	int StartY = nodes.get(j).getNodey();
+	    	 switch(type)
+	         {
+	            case 0 :
+	            	//regular nodes
+			    	rect(StartX,StartY,25,25,7);
+			    	fill(255,223,11); //yellow
+	               break;
+	            case 1 :
+	            	//traffic signal	
+		    		rect(StartX,StartY,25,25,7);
+		    		fill(51,51,255); //blue
+		               break;
+	            default:
+	            	System.out.println("Invalid node type");
+	         }
+	       
 	    		
-	    		
-	    		else{
-	    		System.out.println("Node type cannot be identified");
-	    		}
-	    		
-	    //	System.out.println("Node coordinates for node" + " " + nodeCoordinates.get(j).name+" "+ "x:"+ nodeCoordinates.get(j).Nodex+" "+ "y:"+ nodeCoordinates.get(j).Nodey);
+	 //  	System.out.println("Node coordinates for node" + " " + nodes.get(j).name+" "+ "x:"+ nodes.get(j).Nodex+" "+ "y:"+ nodes.get(j).Nodey);
 	    		
 	    }
 	
 	}
+
+	private void drawCars(int number) {
+		
+		for(int n = 0; n<number; n++)
+		{
+		Random Rand = new Random();
+	
+		int startX = Rand.nextInt(DrawingSpaceWidth)+1;
+		int startY = Rand.nextInt(DrawingSpaceHeight)+1;
+		
+		noStroke();
+			fill(153,0,76);
+			ellipse(startX, startY, 15, 15);
+			
+		}
+	}
+	
+
+	private void moveCar(PVector location,PVector velocity) {
+		//get car's current Location
+		
+		// Add the current speed to the location.
+		  location.add(velocity);
+
+		  // We still sometimes need to refer to the individual components of a PVector 
+		  // and can do so using the dot syntax (location.x, velocity.y, etc.)
+		  if ((location.x > width) || (location.x < 0)) {
+		    velocity.x = velocity.x * -1;
+		  }
+		  if ((location.y > height) || (location.y < 0)) {
+		    velocity.y = velocity.y * -1;
+		  }
+
+		  // Display circle at x location
+		  stroke(0);
+		  fill(175);
+		  ellipse(location.x,location.y,16,16);
+		
+		
+	}
+
+	
+	
+//	private void drawCar() {
+//	Random Rand = new Random();
+//	int startX = Rand.nextInt(DrawingSpaceWidth)+1;
+//	int startY = Rand.nextInt(DrawingSpaceHeight)+1;
+//	
+//	noStroke();
+//		fill(153,53,76);
+//		ellipse(startX, startY,  20, 20);
+//		//ellipse(startX+5, startY+10, 5, 5);
+//		//ellipse(startX+15, startY+10, 5, 5);
+//	
+//}
+
+	
+	
+	
+	
+	
+	
 	
 }
 	

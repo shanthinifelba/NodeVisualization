@@ -33,32 +33,9 @@ public class Car {
 	public void setDestinationNode(int destinationNode) {
 		this.destinationNode = destinationNode;
 	}
-	public int getSourceNodeX() {
-		return sourceNodeX;
-	}
-	public void setSourceNodeX(int sourceNodeX) {
-		this.sourceNodeX = sourceNodeX;
-	}
-	public int getSourceNodeY() {
-		return sourceNodeY;
-	}
-	public void setSourceNodeY(int sourceNodeY) {
-		this.sourceNodeY = sourceNodeY;
-	}
-	public int getDestinationNodeX() {
-		return destinationNodeX;
-	}
-	public void setDestinationNodeX(int destinationNodeX) {
-		this.destinationNodeX = destinationNodeX;
-	}
-	public int getDestinationNodeY() {
-		return destinationNodeY;
-	}
-	public void setDestinationNodeY(int destinationNodeY) {
-		this.destinationNodeY = destinationNodeY;
-	}
+	
 	public int sourceNode;
 	public int destinationNode;
-	public int sourceNodeX,sourceNodeY,destinationNodeX,destinationNodeY;
+	
 
 }

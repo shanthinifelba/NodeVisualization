@@ -5,6 +5,8 @@ public class RoughNodes {
 	int type;
 	String machine;
 	int length;
+	public int Nodex;
+	public int Nodey;
 	public RoughNodes()
 	{
 		
@@ -45,5 +47,17 @@ public class RoughNodes {
 				+ ", machine=" + machine + "]";
 	}
 	
+	public int getNodex() {
+		return Nodex;
+	}
+	public void setNodex(int nodex) {
+		Nodex = nodex;
+	}
+	public int getNodey() {
+		return Nodey;
+	}
+	public void setNodey(int nodey) {
+		Nodey = nodey;
+	}
 	
 }
